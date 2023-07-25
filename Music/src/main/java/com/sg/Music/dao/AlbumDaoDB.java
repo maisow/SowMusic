@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import com.sg.Music.dao.ArtistDaoDB.ArtistMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,37 +30,78 @@ public class AlbumDaoDB implements AlbumDao {
         }
     }
 
-    private List<Album> getArtistsForAlbum(int albumId) {
+    private List<Artist> getArtistsForAlbum(int albumId) {
         String sql = "SELECT a.* FROM Artist a " +
                 "INNER JOIN ArtistAlbum aa ON a.artistId = aa.artistId " +
                 "WHERE aa.albumId = ?";
-        List<Album> ArtistAlbum = jdbc.query(sql, new AlbumMapper(), artistId);
+        List<Artist> ArtistAlbum = jdbc.query(sql, new ArtistMapper(), albumId);
         return ArtistAlbum;
     }
 
     @Override
     public List<Album> getAllAlbums() {
-        return null;
+        String sql = "SELECT * FROM Album";
+        List<Album> albums = jdbc.query(sql, new AlbumMapper());
+        for (Album album : albums) {
+            album.setArtists(getArtistsForAlbum(album.getId()));
+        }
+        return albums;
     }
 
     @Override
+    @Transactional
     public Album addAlbum(Album album) {
-        return null;
+        String sql = "INSERT INTO Album (albumName, albumDescription, isGrammy) VALUES (?, ?, ?)";
+        jdbc.update(sql, album.getName(), album.getDescription(), album.getGrammy());
+
+        int id = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+        album.setId(id);
+        addAlbumToArtistAlbum(album);
+        return album;
+    }
+
+    private void addAlbumToArtistAlbum(Album album) {
+        String sql = "INSERT INTO ArtistAlbum (artistId,albumId) VALUES (?,?)";
+        for (Artist art : album.getArtists()) {
+            jdbc.update(sql, art.getId(), album.getId());
+        }
     }
 
     @Override
     public void updateAlbum(Album album) {
+        String sql = "UPDATE Album SET albumName = ?, albumDescription = ?, isGrammy = ? WHERE albumId = ?";
+        jdbc.update(sql, album.getName(), album.getDescription(), album.getGrammy(), album.getId());
+        jdbc.update("DELETE FROM ArtistAlbum WHERE albumId = ?", album.getId());
+        addAlbumToArtistAlbum(album);
 
     }
 
     @Override
     public void deleteAlbumByID(int id) {
+        String deleteArtistAlbumSQL = "DELETE FROM ArtistAlbum WHERE albumId = ?";
+        jdbc.update(deleteArtistAlbumSQL, id);
+
+        // delete from song
+        String deleteSongsSQL = "DELETE FROM Song WHERE albumId = ?";
+        jdbc.update(deleteSongsSQL, id);
+
+        // delete artist record from Artist table
+        String deleteAlbumSQL = "DELETE FROM Album WHERE albumId = ?";
+        jdbc.update(deleteAlbumSQL, id);
+
 
     }
 
     @Override
     public List<Album> getAlbumsByArtist(Artist artist) {
-        return null;
+        String sql = "SELECT DISTINCT a.* FROM Album a INNER JOIN ArtistAlbum aa " +
+                " ON a.albumId = aa.albumId WHERE aa.artistId = ?";
+
+        List<Album> albums = jdbc.query(sql, new AlbumMapper(), artist.getId());
+        for (Album album : albums) {
+            album.setArtists(getArtistsForAlbum(album.getId()));
+        }
+        return albums;
     }
 
     public static final class AlbumMapper implements RowMapper<Album> {
