@@ -8,18 +8,20 @@ import org.springframework.jdbc.core.RowMapper;
 import com.sg.Music.dao.ArtistDaoDB.ArtistMapper;
 import com.sg.Music.dao.AlbumDaoDB.AlbumMapper;
 import com.sg.Music.dao.PlaylistDaoDB.PlaylistMapper;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
+@Repository
 public class SongDaoDB implements SongDao{
 
     @Autowired
     JdbcTemplate jdbc;
 
     @Override
-    public Song geSongByID(int id) {
+    public Song getSongByID(int id) {
         try {
             String sql = "SELECT * FROM Song WHERE songId = ?";
             Song song = jdbc.queryForObject(sql, new SongMapper(), id);
@@ -75,18 +77,43 @@ public class SongDaoDB implements SongDao{
     }
 
     @Override
+    @Transactional
     public Song addSong(Song song) {
-        return null;
+        String sql = "INSERT INTO Song (songName, isGrammy, artistId, albumId) VALUES (?, ?, ?, ?)";
+        jdbc.update(sql, song.getName(), song.getGrammy(), song.getArtist().getId(), song.getAlbum().getId());
+
+        int id = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+        song.setId(id);
+        addSongToPlaylistSong(song);
+        return song;
+    }
+
+    private void addSongToPlaylistSong(Song song) {
+        String sql = "INSERT INTO PlaylistSong (playlistId,songId) VALUES (?,?)";
+        for (Playlist play : song.getPlaylists()) {
+            jdbc.update(sql, play.getId(), song.getId());
+        }
     }
 
     @Override
     public void updateSong(Song song) {
-
+        String sql = "UPDATE Song SET songName = ?, isGrammy = ?, artistId = ?, albumId =? WHERE songId = ?";
+        jdbc.update(sql, song.getName(), song.getGrammy(), song.getArtist().getId(), song.getAlbum().getId(), song.getId());
+        jdbc.update("DELETE FROM PlaylistSong WHERE songId = ?", song.getId());
+        addSongToPlaylistSong(song);
     }
 
     @Override
     public void deleteSongByID(int id) {
+        String deletePlaylistAlbumSQL = "DELETE FROM PlaylistSong WHERE songId = ?";
+        jdbc.update(deletePlaylistAlbumSQL, id);
 
+        // delete from genre
+        String deleteSongsSQL = "DELETE FROM Genre WHERE songId = ?";
+        jdbc.update(deleteSongsSQL, id);
+
+        String deleteSongSQL = "DELETE FROM Song WHERE songId = ?";
+        jdbc.update(deleteSongSQL, id);
     }
 
     public static final class SongMapper implements RowMapper<Song> {
@@ -95,7 +122,7 @@ public class SongDaoDB implements SongDao{
             Song song = new Song();
             song.setId(rs.getInt("songId"));
             song.setName(rs.getString("songName"));
-            song.setGrammy(rs.getBoolean("songDescription"));
+            song.setGrammy(rs.getBoolean("isGrammy"));
             return song;
         }
     }

@@ -9,12 +9,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import com.sg.Music.dao.LabelDaoDB.LabelMapper;
 import com.sg.Music.dao.AlbumDaoDB.AlbumMapper;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
+@Repository
 public class ArtistDaoDB implements ArtistDao{
 
     @Autowired
@@ -93,17 +94,25 @@ public class ArtistDaoDB implements ArtistDao{
 
     @Override
     public void deleteArtistByID(int id) {
-        String deleteArtistAlbumSQL = "DELETE FROM ArtistAlbum WHERE artistId = ?";
-        jdbc.update(deleteArtistAlbumSQL, id);
+        // Delete from Genre table first
+        String deleteGenreSongsSQL = "DELETE FROM Genre WHERE songId IN (SELECT songId FROM Song WHERE artistId = ?)";
+        jdbc.update(deleteGenreSongsSQL, id);
 
-        // delete from song
+        // Delete from Song table
         String deleteSongsSQL = "DELETE FROM Song WHERE artistId = ?";
         jdbc.update(deleteSongsSQL, id);
 
-        // delete artist record from Artist table
+        // Delete from PlaylistSong table
+        String deletePlaylistSongsSQL = "DELETE FROM PlaylistSong WHERE songId IN (SELECT songId FROM Song WHERE artistId = ?)";
+        jdbc.update(deletePlaylistSongsSQL, id);
+
+        // Delete from ArtistAlbum table
+        String deleteArtistAlbumSQL = "DELETE FROM ArtistAlbum WHERE artistId = ?";
+        jdbc.update(deleteArtistAlbumSQL, id);
+
+        // Delete artist record from Artist table
         String deleteArtistSQL = "DELETE FROM Artist WHERE artistId = ?";
         jdbc.update(deleteArtistSQL, id);
-
 
     }
 

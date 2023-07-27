@@ -6,12 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
+@Repository
 public class LabelDaoDB implements LabelDao {
 
     @Autowired
@@ -62,7 +63,10 @@ public class LabelDaoDB implements LabelDao {
     @Override
     @Transactional
     public void deleteLabelByID(int id) {
-        final String DELETE_LABEL_BY_ARTIST = "DELETE FROM Artist WHERE label = ?";
+        final String DELETE_ARTIST_ALBUM = "DELETE FROM ArtistAlbum WHERE artistId IN (SELECT artistId FROM Artist WHERE labelId = ?)";
+        jdbc.update(DELETE_ARTIST_ALBUM, id);
+
+        final String DELETE_LABEL_BY_ARTIST = "DELETE FROM Artist WHERE labelId = ?";
         jdbc.update(DELETE_LABEL_BY_ARTIST, id);
 
         final String DELETE_LABEL = "DELETE FROM label WHERE labelId =?";
@@ -70,11 +74,7 @@ public class LabelDaoDB implements LabelDao {
 
     }
 
-    @Override
-    public List<Label> getSongByGenre(Label label) {
-        final String SELECT_SONG_BY_GENRE = "SELECT * FROM Artist WHERE labelId = ?";
-        return jdbc.query(SELECT_SONG_BY_GENRE, new LabelMapper(), label.getId());
-    }
+
 
     public static final class LabelMapper implements RowMapper<Label> {
 

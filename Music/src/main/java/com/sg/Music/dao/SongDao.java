@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface SongDao {
 
-    Song geSongByID(int id);
+    Song getSongByID(int id);
     List<Song> getAllSongs();
     Song addSong(Song song);
     void updateSong(Song song);

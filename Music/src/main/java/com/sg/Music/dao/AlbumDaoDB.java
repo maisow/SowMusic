@@ -7,12 +7,14 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import com.sg.Music.dao.ArtistDaoDB.ArtistMapper;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+@Repository
 public class AlbumDaoDB implements AlbumDao {
 
     @Autowired
@@ -78,14 +80,23 @@ public class AlbumDaoDB implements AlbumDao {
 
     @Override
     public void deleteAlbumByID(int id) {
+        // Delete from ArtistAlbum table first
         String deleteArtistAlbumSQL = "DELETE FROM ArtistAlbum WHERE albumId = ?";
         jdbc.update(deleteArtistAlbumSQL, id);
 
-        // delete from song
+        // Delete from Genre table first
+        String deleteGenreSongsSQL = "DELETE FROM Genre WHERE songId IN (SELECT songId FROM Song WHERE albumId = ?)";
+        jdbc.update(deleteGenreSongsSQL, id);
+
+        // Delete from PlaylistSong table
+        String deletePlaylistSongsSQL = "DELETE FROM PlaylistSong WHERE songId IN (SELECT songId FROM Song WHERE albumId = ?)";
+        jdbc.update(deletePlaylistSongsSQL, id);
+
+        // Delete from Song table
         String deleteSongsSQL = "DELETE FROM Song WHERE albumId = ?";
         jdbc.update(deleteSongsSQL, id);
 
-        // delete artist record from Artist table
+        // Delete album record from Album table
         String deleteAlbumSQL = "DELETE FROM Album WHERE albumId = ?";
         jdbc.update(deleteAlbumSQL, id);
 
@@ -110,7 +121,7 @@ public class AlbumDaoDB implements AlbumDao {
             Album album = new Album();
             album.setId(rs.getInt("albumId"));
             album.setName(rs.getString("albumName"));
-            album.setDescription(rs.getString("albumDescription"));
+            album.setdescription(rs.getString("albumDescription"));
             album.setGrammy(rs.getBoolean("isGrammy"));
             return album;
         }

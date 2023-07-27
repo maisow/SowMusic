@@ -1,5 +1,6 @@
 package com.sg.Music.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +15,10 @@ public class Artist {
     private Label label;
 
     private List<Album> albums;
+
+    public Artist() {
+        albums = new ArrayList<>(); // Initialize the albums list in the constructor
+    }
 
 
     public int getAge() {

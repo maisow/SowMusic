@@ -12,6 +12,5 @@ public interface LabelDao {
     Label addLabel(Label label);
     void updateLabel(Label label);
     void deleteLabelByID(int id);
-    List<Label> getSongByGenre(Label label);
 
 }

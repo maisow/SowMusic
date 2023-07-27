@@ -1,5 +1,6 @@
 package com.sg.Music.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,11 +10,15 @@ public class Album {
 
     private String name;
 
-    private String Description;
+    private String description;
 
     private Boolean isGrammy;
 
     private List<Artist> artists;
+
+    public Album() {
+        artists = new ArrayList<>(); // Initialize the artists list in the constructor
+    }
 
     public List<Artist> getArtists() {
         return artists;
@@ -24,11 +29,11 @@ public class Album {
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        description = description;
     }
 
     public int getId() {
