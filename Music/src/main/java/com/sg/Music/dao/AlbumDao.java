@@ -11,7 +11,7 @@ public interface AlbumDao {
     Album addAlbum(Album album);
     void updateAlbum(Album album);
     void deleteAlbumByID(int id);
-
+    List<Artist> getArtistsForAlbum(int albumId);
     List<Album> getAlbumsByArtist(Artist artist);
 
 }

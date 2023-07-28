@@ -20,6 +20,12 @@ public class SongDaoDB implements SongDao{
     @Autowired
     JdbcTemplate jdbc;
 
+    @Autowired
+    ArtistDao artistDao;
+
+
+
+
     @Override
     public Song getSongByID(int id) {
         try {
@@ -34,23 +40,29 @@ public class SongDaoDB implements SongDao{
         }
     }
 
-    private Artist getArtistForSong(int songId) {
+    @Override
+    public Artist getArtistForSong(int songId) {
         String sql = "SELECT A.* FROM Artist A " +
                 "INNER JOIN Song s ON A.artistId = s.artistId " +
                 "WHERE s.songId = ?";
         try {
-            return jdbc.queryForObject(sql, new ArtistMapper(), songId);
+            Artist artist = jdbc.queryForObject(sql, new ArtistMapper(), songId);
+            artist.setLabel(artistDao.getLabelForArtist(artist.getId()));
+            artist.setAlbums(artistDao.getAlbumsForArtist(artist.getId()));
+            return artist;
         } catch(DataAccessException ex) {
             return null;
         }
     }
 
-    private Album getAlbumForSong(int songId) {
+    @Override
+    public Album getAlbumForSong(int songId) {
         String sql = "SELECT l.* FROM Album l " +
                 "INNER JOIN Song a ON l.albumId = a.albumId " +
                 "WHERE a.songId = ?";
         try {
             return jdbc.queryForObject(sql, new AlbumMapper(), songId);
+
         } catch(DataAccessException ex) {
             return null;
         }
@@ -90,8 +102,10 @@ public class SongDaoDB implements SongDao{
 
     private void addSongToPlaylistSong(Song song) {
         String sql = "INSERT INTO PlaylistSong (playlistId,songId) VALUES (?,?)";
-        for (Playlist play : song.getPlaylists()) {
-            jdbc.update(sql, play.getId(), song.getId());
+        if (song.getPlaylists() != null) {
+            for (Playlist play : song.getPlaylists()) {
+                jdbc.update(sql, play.getId(), song.getId());
+            }
         }
     }
 

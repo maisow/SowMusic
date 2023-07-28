@@ -19,6 +19,10 @@ public class PlaylistDaoDB implements PlaylistDao{
 
     @Autowired
     JdbcTemplate jdbc;
+
+    @Autowired
+    SongDao songDao;
+
     @Override
     public Playlist gePlaylistByID(int id) {
         try {
@@ -30,12 +34,16 @@ public class PlaylistDaoDB implements PlaylistDao{
             return null;
         }
     }
-
-    private List<Song> getSongsForPlaylist(int playlistId) {
+    @Override
+    public List<Song> getSongsForPlaylist(int playlistId) {
         String sql = "SELECT s.* FROM Song s " +
                 "INNER JOIN PlaylistSong ps ON s.songId = ps.songId " +
                 "WHERE ps.playlistId = ?";
         List<Song> playlistSongs = jdbc.query(sql, new SongMapper(), playlistId);
+        for (Song song : playlistSongs) {
+            song.setArtist(songDao.getArtistForSong(song.getId()));
+            song.setAlbum(songDao.getAlbumForSong(song.getId()));
+        }
         return playlistSongs;
     }
 
@@ -62,14 +70,16 @@ public class PlaylistDaoDB implements PlaylistDao{
 
     private void addPlaylistToPlaylistSong(Playlist playlist) {
         String sql = "INSERT INTO PlaylistSong (playlistId,SongId) VALUES (?,?)";
-        for (Song song : playlist.getSongs()) {
-            jdbc.update(sql, playlist.getId(), song.getId());
+        if (playlist.getSongs() != null) {
+            for (Song song : playlist.getSongs()) {
+                jdbc.update(sql, playlist.getId(), song.getId());
+            }
         }
     }
 
     @Override
-    public void updateSong(Playlist playlist) {
-        String sql = "UPDATE Artist SET playlistName = ?, playlistDescription = ? WHERE playlistId = ?";
+    public void updatePlaylist(Playlist playlist) {
+        String sql = "UPDATE Playlist SET playlistName = ?, playlistDescription = ? WHERE playlistId = ?";
         jdbc.update(sql, playlist.getName(), playlist.getDescription(), playlist.getId());
         jdbc.update("DELETE FROM PlaylistSong WHERE playlistId = ?", playlist.getId());
         addPlaylistToPlaylistSong(playlist);

@@ -1,9 +1,6 @@
 package com.sg.Music.dao;
 
-import com.sg.Music.entities.Artist;
-import com.sg.Music.entities.Genre;
-import com.sg.Music.entities.Label;
-import com.sg.Music.entities.Song;
+import com.sg.Music.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,6 +17,11 @@ public class GenreDaoDB implements GenreDao {
 
     @Autowired
     JdbcTemplate jdbc;
+
+    @Autowired
+    PlaylistDao playlistDao;
+    @Autowired
+    ArtistDao artistDao;
 
     @Override
     public Genre getGenreByID(int id) {
@@ -38,10 +40,49 @@ public class GenreDaoDB implements GenreDao {
                 "INNER JOIN Genre g ON s.songId = g.songId " +
                 "WHERE g.genreId = ?";
         try {
-            return jdbc.queryForObject(sql, new SongMapper(), genreId);
+
+            Song song = jdbc.queryForObject(sql, new SongMapper(), genreId);
+            song.setAlbum(getAlbumForSong(song.getId()));
+            song.setPlaylists(getPlaylistsForSong(song.getId()));
+            song.setArtist(getArtistForSong(song.getId()));
+            return song;
         } catch(DataAccessException ex) {
             return null;
         }
+    }
+
+    private Artist getArtistForSong(int songId) {
+        String sql = "SELECT A.* FROM Artist A " +
+                "INNER JOIN Song s ON A.artistId = s.artistId " +
+                "WHERE s.songId = ?";
+        try {
+            Artist artist = jdbc.queryForObject(sql, new ArtistDaoDB.ArtistMapper(), songId);
+            artist.setLabel(artistDao.getLabelForArtist(artist.getId()));
+            artist.setAlbums(artistDao.getAlbumsForArtist(artist.getId()));
+            return artist;
+        } catch(DataAccessException ex) {
+            return null;
+        }
+    }
+
+
+    private Album getAlbumForSong(int songId) {
+        String sql = "SELECT l.* FROM Album l " +
+                "INNER JOIN Song a ON l.albumId = a.albumId " +
+                "WHERE a.songId = ?";
+        try {
+            return jdbc.queryForObject(sql, new AlbumDaoDB.AlbumMapper(), songId);
+        } catch(DataAccessException ex) {
+            return null;
+        }
+    }
+
+    private List<Playlist> getPlaylistsForSong(int songId) {
+        String sql = "SELECT a.* FROM Playlist a " +
+                "INNER JOIN PlaylistSong aa ON a.playlistId = aa.playlistId " +
+                "WHERE aa.songId = ?";
+        List<Playlist> PlaylistSong = jdbc.query(sql, new PlaylistDaoDB.PlaylistMapper(), songId);
+        return PlaylistSong;
     }
 
 

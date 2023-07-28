@@ -1,9 +1,6 @@
 package com.sg.Music.dao;
 
-import com.sg.Music.entities.Album;
-import com.sg.Music.entities.Artist;
-import com.sg.Music.entities.Genre;
-import com.sg.Music.entities.Song;
+import com.sg.Music.entities.*;
 
 import java.util.List;
 

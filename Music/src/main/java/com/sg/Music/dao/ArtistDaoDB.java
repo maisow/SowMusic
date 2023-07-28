@@ -21,7 +21,7 @@ public class ArtistDaoDB implements ArtistDao{
     @Autowired
     JdbcTemplate jdbc;
 
-    @Override
+  /*  @Override
     public Artist getArtistByID(int id) {
         try {
             String sql = "SELECT * FROM Artist WHERE artistId = ?";
@@ -32,9 +32,25 @@ public class ArtistDaoDB implements ArtistDao{
         }  catch (DataAccessException ex) {
             return null;
         }
+    } */
+
+    @Override
+    public Artist getArtistByID(int id) {
+        try {
+            String sql = "SELECT * FROM Artist WHERE artistId = ?";
+            Artist artist = jdbc.queryForObject(sql, new ArtistMapper(), id);
+            // Set the artist's label
+            artist.setLabel(getLabelForArtist(id));
+            // Set the artist's albums
+            artist.setAlbums(getAlbumsForArtist(id));
+            return artist;
+        } catch (DataAccessException ex) {
+            return null;
+        }
     }
 
-    private Label getLabelForArtist(int artistId) {
+@Override
+    public Label getLabelForArtist(int artistId) {
         String sql = "SELECT l.* FROM Label l " +
                 "INNER JOIN Artist a ON l.labelId = a.labelId " +
                 "WHERE a.artistId = ?";
@@ -45,13 +61,6 @@ public class ArtistDaoDB implements ArtistDao{
         }
     }
 
-    private List<Album> getAlbumsForArtist(int artistId) {
-        String sql = "SELECT a.* FROM Album a " +
-                "INNER JOIN ArtistAlbum aa ON a.albumId = aa.albumId " +
-                "WHERE aa.artistId = ?";
-        List<Album> ArtistAlbum = jdbc.query(sql, new AlbumMapper(), artistId);
-        return ArtistAlbum;
-    }
 
     @Override
     public List<Artist> getAllArtists() {
@@ -78,8 +87,10 @@ public class ArtistDaoDB implements ArtistDao{
 
     private void addArtistToArtistAlbum(Artist artist) {
         String sql = "INSERT INTO ArtistAlbum (artistId,albumId) VALUES (?,?)";
-        for (Album alb : artist.getAlbums()) {
-            jdbc.update(sql, artist.getId(), alb.getId());
+        if (artist.getAlbums() != null) {
+            for (Album alb : artist.getAlbums()) {
+                jdbc.update(sql, artist.getId(), alb.getId());
+        }
         }
     }
 
@@ -94,17 +105,23 @@ public class ArtistDaoDB implements ArtistDao{
 
     @Override
     public void deleteArtistByID(int id) {
-        // Delete from Genre table first
-        String deleteGenreSongsSQL = "DELETE FROM Genre WHERE songId IN (SELECT songId FROM Song WHERE artistId = ?)";
-        jdbc.update(deleteGenreSongsSQL, id);
+        // Get the list of song IDs associated with the artist
+        List<Integer> songIds = jdbc.queryForList("SELECT songId FROM Song WHERE artistId = ?", Integer.class, id);
 
-        // Delete from Song table
-        String deleteSongsSQL = "DELETE FROM Song WHERE artistId = ?";
-        jdbc.update(deleteSongsSQL, id);
+        // Delete songs first
+        for (int songId : songIds) {
+            // Delete from Genre table for each song
+            String deleteGenreSQL = "DELETE FROM Genre WHERE songId = ?";
+            jdbc.update(deleteGenreSQL, songId);
 
-        // Delete from PlaylistSong table
-        String deletePlaylistSongsSQL = "DELETE FROM PlaylistSong WHERE songId IN (SELECT songId FROM Song WHERE artistId = ?)";
-        jdbc.update(deletePlaylistSongsSQL, id);
+            // Delete from PlaylistSong table for each song
+            String deletePlaylistSongSQL = "DELETE FROM PlaylistSong WHERE songId = ?";
+            jdbc.update(deletePlaylistSongSQL, songId);
+
+            // Delete the song itself
+            String deleteSongSQL = "DELETE FROM Song WHERE songId = ?";
+            jdbc.update(deleteSongSQL, songId);
+        }
 
         // Delete from ArtistAlbum table
         String deleteArtistAlbumSQL = "DELETE FROM ArtistAlbum WHERE artistId = ?";
@@ -113,8 +130,18 @@ public class ArtistDaoDB implements ArtistDao{
         // Delete artist record from Artist table
         String deleteArtistSQL = "DELETE FROM Artist WHERE artistId = ?";
         jdbc.update(deleteArtistSQL, id);
-
     }
+
+
+    @Override
+    public List<Album> getAlbumsForArtist(int artistId) {
+        String sql = "SELECT a.* FROM Album a " +
+                "INNER JOIN ArtistAlbum aa ON a.albumId = aa.albumId " +
+                "WHERE aa.artistId = ?";
+        List<Album> ArtistAlbum = jdbc.query(sql, new AlbumMapper(), artistId);
+        return ArtistAlbum;
+    }
+
 
     @Override
     public List<Artist> getArtistsByAlbum(Album album) {

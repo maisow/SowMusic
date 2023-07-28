@@ -2,6 +2,7 @@ package com.sg.Music.dao;
 
 import com.sg.Music.entities.Album;
 import com.sg.Music.entities.Artist;
+import com.sg.Music.entities.Label;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,6 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 import com.sg.Music.dao.ArtistDaoDB.ArtistMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import com.sg.Music.dao.LabelDaoDB.LabelMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,6 +22,10 @@ public class AlbumDaoDB implements AlbumDao {
     @Autowired
     JdbcTemplate jdbc;
 
+    @Autowired
+    ArtistDao artistDao;
+
+/*
     @Override
     public Album getAlbumByID(int id) {
         try {
@@ -32,13 +38,42 @@ public class AlbumDaoDB implements AlbumDao {
         }
     }
 
-    private List<Artist> getArtistsForAlbum(int albumId) {
+   private List<Artist> getArtistsForAlbum(int albumId) {
         String sql = "SELECT a.* FROM Artist a " +
                 "INNER JOIN ArtistAlbum aa ON a.artistId = aa.artistId " +
                 "WHERE aa.albumId = ?";
         List<Artist> ArtistAlbum = jdbc.query(sql, new ArtistMapper(), albumId);
+        for (Artist artist : ArtistAlbum) {
+           artist=artistDao.getArtistByID(artist.getId());
+        }
         return ArtistAlbum;
+    } */
+
+    @Override
+    public Album getAlbumByID(int id) {
+        try {
+            String sql = "SELECT * FROM Album WHERE albumId = ?";
+            Album album = jdbc.queryForObject(sql, new AlbumMapper(), id);
+            album.setArtists(getArtistsForAlbum(id));
+            return album;
+        } catch (DataAccessException ex) {
+            return null;
+        }
     }
+
+    @Override
+    public List<Artist> getArtistsForAlbum(int albumId) {
+        String sql = "SELECT a.* FROM Artist a " +
+                "INNER JOIN ArtistAlbum aa ON a.artistId = aa.artistId " +
+                "WHERE aa.albumId = ?";
+        List<Artist> artists = jdbc.query(sql, new ArtistMapper(), albumId);
+        for (Artist artist : artists) {
+            artist.setAlbums(artistDao.getAlbumsForArtist(artist.getId()));
+            artist.setLabel(artistDao.getLabelForArtist(artist.getId()));
+        }
+        return artists;
+    }
+
 
     @Override
     public List<Album> getAllAlbums() {
@@ -64,9 +99,12 @@ public class AlbumDaoDB implements AlbumDao {
 
     private void addAlbumToArtistAlbum(Album album) {
         String sql = "INSERT INTO ArtistAlbum (artistId,albumId) VALUES (?,?)";
-        for (Artist art : album.getArtists()) {
-            jdbc.update(sql, art.getId(), album.getId());
+        if (album.getArtists() != null) {
+            for (Artist artist : album.getArtists()) {
+                jdbc.update(sql, artist.getId(), album.getId());
+            }
         }
+
     }
 
     @Override
@@ -121,7 +159,7 @@ public class AlbumDaoDB implements AlbumDao {
             Album album = new Album();
             album.setId(rs.getInt("albumId"));
             album.setName(rs.getString("albumName"));
-            album.setdescription(rs.getString("albumDescription"));
+            album.setDescription(rs.getString("albumDescription"));
             album.setGrammy(rs.getBoolean("isGrammy"));
             return album;
         }

@@ -16,9 +16,6 @@ public class Album {
 
     private List<Artist> artists;
 
-    public Album() {
-        artists = new ArrayList<>(); // Initialize the artists list in the constructor
-    }
 
     public List<Artist> getArtists() {
         return artists;
@@ -33,7 +30,7 @@ public class Album {
     }
 
     public void setDescription(String description) {
-        description = description;
+        this.description = description;
     }
 
     public int getId() {
@@ -72,4 +69,16 @@ public class Album {
     public int hashCode() {
         return Objects.hash(getId(), getName(), getDescription(), isGrammy, getArtists());
     }
+
+    @Override
+    public String toString() {
+        return "Album{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", isGrammy=" + isGrammy +
+                ", artists=" + artists +
+                '}';
+    }
+
 }

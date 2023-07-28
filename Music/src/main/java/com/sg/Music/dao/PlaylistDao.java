@@ -13,8 +13,9 @@ public interface PlaylistDao {
     Playlist gePlaylistByID(int id);
     List<Playlist> getAllPlaylists();
     Playlist addPlaylist(Playlist playlist);
-    void updateSong(Playlist playlist);
+    void updatePlaylist(Playlist playlist);
     void deletePlaylistByID(int id);
+    List<Song> getSongsForPlaylist(int playlistId);
 
     List<Playlist> getPlaylistsBySong(Song song);
 }

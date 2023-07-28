@@ -16,11 +16,6 @@ public class Artist {
 
     private List<Album> albums;
 
-    public Artist() {
-        albums = new ArrayList<>(); // Initialize the albums list in the constructor
-    }
-
-
     public int getAge() {
         return Age;
     }

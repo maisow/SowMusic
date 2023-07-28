@@ -1,5 +1,6 @@
 package com.sg.Music.entities;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Genre {
@@ -11,6 +12,7 @@ public class Genre {
     private String description;
 
     private Song song;
+
 
     public String getDescription() {
         return description;

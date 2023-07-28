@@ -1,5 +1,6 @@
 package com.sg.Music.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,6 +13,9 @@ public class Playlist {
     private String description;
 
     private List<Song> songs;
+
+
+
 
     public String getDescription() {
         return description;

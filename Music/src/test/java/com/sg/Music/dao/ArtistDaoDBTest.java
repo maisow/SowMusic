@@ -102,22 +102,11 @@ class ArtistDaoDBTest {
         label.setDescription("Represents best country artist");
         label = labelDao.addLabel(label);
 
-        Label label2 = new Label();
-        label2.setName("Fun Company");
-        label2.setDescription("Worlds Best");
-        label2 = labelDao.addLabel(label2);
-
         Album album = new Album();
         album.setName("Country Album");
         album.setDescription("Best country songs");
         album.setGrammy(false);
         album = albumDao.addAlbum(album);
-
-        Album album2 = new Album();
-        album2.setName("Canada album");
-        album2.setDescription("canadian songs");
-        album2.setGrammy(false);
-        album2 = albumDao.addAlbum(album2);
 
         Artist artist = new Artist();
         artist.setName("John Doe");
@@ -131,10 +120,8 @@ class ArtistDaoDBTest {
         Artist artist2 = new Artist();
         artist2.setName("Maimouna Sow");
         artist2.setAge(21);
-        artist2.setLabel(label2);
-        List<Album> albums2 = new ArrayList<>();
-        albums2.add(album2);
-        artist2.setAlbums(albums2);
+        artist2.setLabel(label);
+        artist2.setAlbums(albums);
         artist2 = artistDao.addArtist(artist2);
 
         List<Artist> artists = artistDao.getAllArtists();
@@ -216,18 +203,61 @@ class ArtistDaoDBTest {
         song.setPlaylists(playlists);
         song = songDao.addSong(song);
 
-        /*Artist deleted = artistDao.getArtistByID(artist.getId());
+
+        Genre genre = new Genre();
+        genre.setName("Pop America");
+        genre.setDescription("Los Angelos");
+        genre.setSong(song);
+        genre = genreDao.addGenre(genre);
+
+        assertNotNull(artist);
+        assertNotNull(song);
+
+        Artist deleted = artistDao.getArtistByID(artist.getId());
         assertEquals(artist, deleted);
 
         artistDao.deleteArtistByID(artist.getId());
 
         deleted = artistDao.getArtistByID(artist.getId());
-        assertNull(deleted); */
-
-
+        Song deletedSong = songDao.getSongByID(song.getId());
+        assertNull(deleted);
+        assertNull(deletedSong);
     }
 
     @Test
     void getArtistsByAlbum() {
+        Label label = new Label();
+        label.setName("WorldRecords");
+        label.setDescription("Represents best country artist");
+        label = labelDao.addLabel(label);
+
+        Album album = new Album();
+        album.setName("Country Album");
+        album.setDescription("Best country songs");
+        album.setGrammy(false);
+        album = albumDao.addAlbum(album);
+
+        Artist artist = new Artist();
+        artist.setName("John Doe");
+        artist.setAge(35);
+        artist.setLabel(label);
+        List<Album> albums = new ArrayList<>();
+        albums.add(album);
+        artist.setAlbums(albums);
+        artist = artistDao.addArtist(artist);
+
+        Artist artist2 = new Artist();
+        artist2.setName("Maimouna Sow");
+        artist2.setAge(21);
+        artist2.setLabel(label);
+        artist2.setAlbums(albums);
+        artist2 = artistDao.addArtist(artist2);
+
+        List<Artist> artists = artistDao.getArtistsByAlbum(album);
+        assertEquals(2, artists.size());
+
+        assertTrue(artists.contains(artist));
+        assertTrue(artists.contains(artist2));
+
     }
 }
