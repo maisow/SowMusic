@@ -63,16 +63,25 @@ public class LabelDaoDB implements LabelDao {
     @Override
     @Transactional
     public void deleteLabelByID(int id) {
-        final String DELETE_ARTIST_ALBUM = "DELETE FROM ArtistAlbum WHERE artistId IN (SELECT artistId FROM Artist WHERE labelId = ?)";
-        jdbc.update(DELETE_ARTIST_ALBUM, id);
+        final String SELECT_SONGS_BY_LABEL_ARTISTS = "SELECT s.songId FROM Song s JOIN Artist a ON s.artistId = a.artistId WHERE a.labelId = ?";
+        List<Integer> songIds = jdbc.queryForList(SELECT_SONGS_BY_LABEL_ARTISTS, Integer.class, id);
 
-        final String DELETE_LABEL_BY_ARTIST = "DELETE FROM Artist WHERE labelId = ?";
-        jdbc.update(DELETE_LABEL_BY_ARTIST, id);
+        // Delete the songs associated with the label's artists
+        for (int songId : songIds) {
+            final String DELETE_SONG_BY_ID = "DELETE FROM Song WHERE songId = ?";
+            jdbc.update(DELETE_SONG_BY_ID, songId);
+        }
 
-        final String DELETE_LABEL = "DELETE FROM label WHERE labelId =?";
+        // Delete the artists associated with the label
+        final String DELETE_ARTISTS_BY_LABEL = "DELETE FROM Artist WHERE labelId = ?";
+        jdbc.update(DELETE_ARTISTS_BY_LABEL, id);
+
+        // Delete the label
+        final String DELETE_LABEL = "DELETE FROM Label WHERE labelId = ?";
         jdbc.update(DELETE_LABEL, id);
-
     }
+
+
 
 
 

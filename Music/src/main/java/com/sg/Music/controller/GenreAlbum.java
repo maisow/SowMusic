@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -23,6 +24,21 @@ public class GenreAlbum {
         model.addAttribute("genres", genres);
 
         return "genres";
+    }
+
+    @GetMapping("genreDetail")
+    public String genreDetail(Integer id, Model model) {
+        Genre genre = service.getGenreByID(id);
+        model.addAttribute("genre", genre);
+
+        return "genreDetail";
+    }
+
+    @PostMapping("deleteGenre")
+    public String deleteGenre(Integer id) {
+        service.deleteGenreByID(id);
+
+        return "redirect:/genres";
     }
 
 }

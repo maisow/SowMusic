@@ -76,7 +76,7 @@
                 </td>
                 <td th:text='${song.artist.name}'>Artist</td>
                 <td th:text="${song.album.name}">Album</td>
-                <td><a href="#" th:href="@{/songDetails(id=${song.id})}">Details</a></td>
+                <td><a href="#" th:href="@{/songDetail(id=${song.id})}">Details</a></td>
                 <td><a href="#" th:href="@{/editSong(id=${song.id})}">Edit</a></td>
                 <td>
                     <!-- Form for delete action -->

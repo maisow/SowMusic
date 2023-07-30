@@ -69,7 +69,7 @@
             <tr th:each="playlist : ${playlists}">
                 <td th:text='${playlist.name}'>Name</td>
                 <td th:text="${playlist.description}">Description</td>
-                <td><a href="#" th:href="@{/playlistDetails(id=${playlist.id})}">Details</a></td>
+                <td><a href="#" th:href="@{/playlistDetail(id=${playlist.id})}">Details</a></td>
                 <td><a href="#" th:href="@{/editPlaylist(id=${playlist.id})}">Edit</a></td>
                 <td>
                     <!-- Form for delete action -->

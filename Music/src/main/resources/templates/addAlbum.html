@@ -53,36 +53,62 @@
     </div>
 </div> <!-- Closing div for container -->
 
-<!-- Hero Details: Start-->
+
 <div class="row m-4 border border-dark">
-    <div class="col-6 text-right"><strong>Genre Name:</strong></div>
-    <div class="col-6 text-left">
-        <span th:text="${genre.name}">display genre Name</span>
-    </div>
+        <div class="col-3 text-center m-3">
+            <span class="h3">Add Album</span>
+        </div>
+        <div class="col-7 text-center m-3">
+            <form action="addAlbum" method="POST">
+                <div class="form-group row">
+                    <label for="name" class="col-3 col-form-label">
+                        Name</label>
+                    <div class="col-9">
+                        <input type="text" name="name"
+                               id="name" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="description" class="col-3 col-form-label">
+                        Description</label>
+                    <div class="col-9">
+                        <textarea id="description" name="description" rows="4" cols="50">
+                        </textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="description" class="col-3 col-form-label">Grammy Win?</label>
+                    <div class="col-9">
+                        <select id="grammy" name="grammy">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
 
-    <div class="col-6 text-right"><strong>Description:</strong></div>
-    <div class="col-6 text-left">
-        <span th:text="${genre.description}">display Description</span>
-    </div>
-    <div class="col-6 text-right"><strong>Song:</strong></div>
-    <div class="col-6 text-left">
-        <span th:text="${genre.song.name}">display song name</span>
-    </div>
-
-
-    <div class="col-12 text-center mt-3 mb-3">
-        <button type="button" class="btn btn-primary" onclick="window.location.href='/genres'">Back to Genre</button>
+                <div class="form-group row">
+                    <label for="artists" class="col-3 col-form-label">
+                        Artists</label>
+                    <div class="col-9">
+                        <select multiple id="artists" name="artistId" class="form-control">
+                            <option th:each="artist : ${artists}" th:value="${artist.id}" th:text="${artist.name}">
+                                Artist Name</option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('album.artists')}" class="text-danger">
+                            <div th:each="err : ${#fields.errors('album.artists')}">
+                                <p th:text="${err}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Album</button>
+                <button type="button" class="btn btn-primary" onclick="window.location.href='/heroes'">Cancel</button>
+            </form>
+        </div>
     </div>
 </div>
-<!-- Hero Details: End-->
-</div>
-<!-- End main Body of Page -->
-
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-
 </body>
-</html>
+</html>;

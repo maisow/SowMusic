@@ -72,7 +72,7 @@
                     <span th:if="${album.grammy}">Yes</span>
                     <span th:unless="${album.grammy}">No</span>
                 </td>
-                <td><a href="#" th:href="@{/AlbumDetail(id=${album.id})}">Details</a></td>
+                <td><a href="#" th:href="@{/albumDetail(id=${album.id})}">Details</a></td>
             </tr>
             </tbody>
         </table>
