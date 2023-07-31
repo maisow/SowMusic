@@ -1,6 +1,5 @@
 # Music Application with Java and Spring
 
-![Music App Logo](/path/to/logo.png)
 
 ## Table of Contents
 
