@@ -53,60 +53,65 @@
     </div>
 </div> <!-- Closing div for container -->
 
-
 <div class="row m-4 border border-dark">
     <div class="col-3 text-center m-3">
-        <span class="h3">Add Playlist</span>
+        <span class="h3">Edit Genre</span>
     </div>
     <div class="col-7 text-center m-3">
-        <form action="addPlaylist" method="POST">
+
+        <form action="editGenre" method="POST">
             <div class="form-group row">
-                <label for="name" class="col-3 col-form-label">
-                    Name</label>
+                <label for="name" class="col-3 col-form-label">Name</label>
                 <div class="col-9">
-                    <input type="text" name="name"
-                           id="name" class="form-control"/>
-                    <div th:if="${#fields.hasErrors('playlist.name')}" class="text-danger">
-                        <div th:each="err : ${#fields.errors('playlist.name')}">
+                    <input type="text" name="name" id="name" class="form-control"
+                           th:value="${genre.name}"/>
+                    <div th:if="${#fields.hasErrors('genre.name')}" class="text-danger">
+                        <div th:each="err : ${#fields.errors('genre.name')}">
                             <p th:text="${err}"></p>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="form-group row">
                 <label for="description" class="col-3 col-form-label">
                     Description</label>
                 <div class="col-9">
-                    <input type = "text" id="description" name="description" class ="form-control"/>
-                    <div th:if="${#fields.hasErrors('playlist.description')}" class="text-danger">
-                        <div th:each="err : ${#fields.errors('playlist.description')}">
+                    <input type="text" name="description"
+                           id="description" class="form-control"
+                           th:value="${genre.description}"/>
+                    <div th:if="${#fields.hasErrors('genre.description')}" class="text-danger">
+                        <div th:each="err : ${#fields.errors('genre.description')}">
                             <p th:text="${err}"></p>
                         </div>
                     </div>
                 </div>
             </div>
 
+
             <div class="form-group row">
-                <label for="songs" class="col-3 col-form-label">
-                    Songs</label>
+                <label for="song" class="col-3 col-form-label">Song</label>
                 <div class="col-9">
-                    <select multiple id="songs" name="songId" class="form-control">
-                        <option th:each="song : ${songs}" th:value="${song.id}" th:text="${song.name}">
+                    <select id="song" name="songId" class="form-control" >
+                        <option th:each="song : ${songs}"
+                                th:value="${song.id}"
+                                th:text="${song.name}">
                             Song Name</option>
                     </select>
-                    <div th:if="${#fields.hasErrors('playlist.songs')}" class="text-danger">
-                        <div th:each="err : ${#fields.errors('playlist.songs')}">
-                            <p th:text="${err}"></p>
-                        </div>
-                    </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Add Playlist</button>
-            <button type="button" class="btn btn-primary" onclick="window.location.href='/playlists'">Cancel</button>
+
+            <input type="hidden" name="id" th:value="${genre.id}"/>
+            <button type="submit" class="btn btn-primary">Edit Genre</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='/genres'">Cancel</button>
         </form>
     </div>
 </div>
 </div>
+<!-- End main body -->
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>

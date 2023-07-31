@@ -10,6 +10,7 @@ public interface ServiceInterface {
     Album addAlbum(Album album);
     void updateAlbum(Album album);
     void deleteAlbumByID(int id);
+    public Artist getArtistByName(String artistName);
 
     List<Album> getAlbumsByArtist(Artist artist);
     Artist getArtistByID(int id);
@@ -17,6 +18,8 @@ public interface ServiceInterface {
     Artist addArtist(Artist artist);
     void updateArtist(Artist artist);
     void deleteArtistByID(int id);
+
+    public List<Artist> getArtistsByLabel(Label label);
 
     List<Artist> getArtistsByAlbum(Album album);
 

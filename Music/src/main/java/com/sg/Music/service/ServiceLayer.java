@@ -54,6 +54,11 @@ public class ServiceLayer implements ServiceInterface {
     }
 
     @Override
+    public Artist getArtistByName(String artistName) {
+        return albumDao.getArtistByName(artistName);
+    }
+
+    @Override
     public List<Album> getAlbumsByArtist(Artist artist) {
         return albumDao.getAlbumsByArtist(artist);
     }
@@ -75,12 +80,17 @@ public class ServiceLayer implements ServiceInterface {
 
     @Override
     public void updateArtist(Artist artist) {
-        updateArtist(artist);
+        artistDao.updateArtist(artist);
     }
 
     @Override
     public void deleteArtistByID(int id) {
         artistDao.deleteArtistByID(id);
+    }
+
+    @Override
+    public List<Artist> getArtistsByLabel(Label label) {
+        return artistDao.getArtistsByLabel(label);
     }
 
     @Override

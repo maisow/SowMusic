@@ -53,60 +53,88 @@
     </div>
 </div> <!-- Closing div for container -->
 
-
 <div class="row m-4 border border-dark">
     <div class="col-3 text-center m-3">
-        <span class="h3">Add Playlist</span>
+        <span class="h3">Edit Song</span>
     </div>
     <div class="col-7 text-center m-3">
-        <form action="addPlaylist" method="POST">
+
+        <form action="editSong" method="POST">
             <div class="form-group row">
-                <label for="name" class="col-3 col-form-label">
-                    Name</label>
+                <label for="name" class="col-3 col-form-label">Name</label>
                 <div class="col-9">
-                    <input type="text" name="name"
-                           id="name" class="form-control"/>
-                    <div th:if="${#fields.hasErrors('playlist.name')}" class="text-danger">
-                        <div th:each="err : ${#fields.errors('playlist.name')}">
+                    <input type="text" name="name" id="name" class="form-control"
+                           th:value="${song.name}"/>
+                    <div th:if="${#fields.hasErrors('song.name')}" class="text-danger">
+                        <div th:each="err : ${#fields.errors('song.name')}">
                             <p th:text="${err}"></p>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="form-group row">
-                <label for="description" class="col-3 col-form-label">
-                    Description</label>
+                <label for="grammy" class="col-3 col-form-label">
+                    Grammy Win?</label>
                 <div class="col-9">
-                    <input type = "text" id="description" name="description" class ="form-control"/>
-                    <div th:if="${#fields.hasErrors('playlist.description')}" class="text-danger">
-                        <div th:each="err : ${#fields.errors('playlist.description')}">
-                            <p th:text="${err}"></p>
-                        </div>
-                    </div>
+                    <select id="grammy" name="grammy">
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="artist" class="col-3 col-form-label">Artist</label>
+                <div class="col-9">
+                    <select id="artist" name="artistId" class="form-control" >
+                        <option th:each="artist : ${artists}"
+                                th:value="${artist.id}"
+                                th:text="${artist.name}">
+                            Artist Name</option>
+                    </select>
                 </div>
             </div>
 
             <div class="form-group row">
-                <label for="songs" class="col-3 col-form-label">
-                    Songs</label>
+                <label for="album" class="col-3 col-form-label">Album</label>
                 <div class="col-9">
-                    <select multiple id="songs" name="songId" class="form-control">
-                        <option th:each="song : ${songs}" th:value="${song.id}" th:text="${song.name}">
-                            Song Name</option>
+                    <select id="album" name="albumId" class="form-control" >
+                        <option th:each="album : ${albums}"
+                                th:value="${album.id}"
+                                th:text="${album.name}">
+                            Album Name</option>
                     </select>
-                    <div th:if="${#fields.hasErrors('playlist.songs')}" class="text-danger">
-                        <div th:each="err : ${#fields.errors('playlist.songs')}">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="playlists" class="col-3 col-form-label">
+                    Playlist</label>
+                <div class="col-9">
+                    <select multiple id="playlists" name="playlistId"
+                            class="form-control" >
+                        <option th:each="playlist : ${playlists}"
+                                th:value="${playlist.id}"
+                                th:text="${playlist.name}">
+                            Playlist Name</option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('song.playlists')}" class="text-danger">
+                        <div th:each="err : ${#fields.errors('song.playlists')}">
                             <p th:text="${err}"></p>
                         </div>
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Add Playlist</button>
-            <button type="button" class="btn btn-primary" onclick="window.location.href='/playlists'">Cancel</button>
+            <input type="hidden" name="id" th:value="${song.id}"/>
+            <button type="submit" class="btn btn-primary">Edit Song</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='/songs'">Cancel</button>
         </form>
     </div>
 </div>
 </div>
+<!-- End main body -->
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>

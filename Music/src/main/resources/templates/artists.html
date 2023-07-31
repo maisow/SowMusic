@@ -53,6 +53,27 @@
     </div>
 </div> <!-- Closing div for container -->
 
+<!-- Search Box for Label -->
+<div class="col text-center m-3">
+    <form th:action="@{/searchArtists}" method="get">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="labelSelect">Select Label</label>
+            </div>
+            <select class="custom-select" id="labelSelect" name="labelId">
+                <option value="">All Labels</option>
+                <th:block th:each="label : ${labels}">
+                    <option th:value="${label.id}" th:text="${label.name}"></option>
+                </th:block>
+            </select>
+            <div class="input-group-append">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
 <div class="row m-4 border border-dark">
     <div class="col text-center m-3">
         <table class="table table-striped">

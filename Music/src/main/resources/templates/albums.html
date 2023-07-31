@@ -52,6 +52,27 @@
         </div>
     </div>
 </div> <!-- Closing div for container -->
+<!-- Search Box with Dropdown -->
+<div class="row m-4">
+    <div class="col">
+        <form th:action="@{/searchAlbums}" method="get">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="artistSelect">Select Artist</label>
+                </div>
+                <select class="custom-select" id="artistSelect" name="artistId">
+                    <option value="">All Artists</option>
+                    <th:block th:each="artist : ${artists}">
+                        <option th:value="${artist.id}" th:text="${artist.name}"></option>
+                    </th:block>
+                </select>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
         <div class="row m-4 border border-dark">
             <div class="col text-center m-3">

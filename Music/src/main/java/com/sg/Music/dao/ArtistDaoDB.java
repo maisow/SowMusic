@@ -156,6 +156,18 @@ public class ArtistDaoDB implements ArtistDao{
         return artists;
     }
 
+    @Override
+    public List<Artist> getArtistsByLabel(Label label) {
+        String sql = "SELECT * FROM Artist WHERE labelId = ?";
+        List<Artist> artists = jdbc.query(sql, new ArtistMapper(), label.getId());
+        for (Artist artist : artists) {
+            artist.setLabel(label);
+            artist.setAlbums(getAlbumsForArtist(artist.getId()));
+        }
+        return artists;
+    }
+
+
     public static final class ArtistMapper implements RowMapper<Artist> {
         @Override
         public Artist mapRow(ResultSet rs, int rowNum) throws SQLException {

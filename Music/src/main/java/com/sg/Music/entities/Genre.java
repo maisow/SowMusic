@@ -1,5 +1,6 @@
 package com.sg.Music.entities;
 
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.Objects;
 

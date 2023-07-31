@@ -1,10 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <!-- Custom Styles -->
+    <style>
+        /* Options: Light Purple */
+        .btn-outline-primary {
+            color: #9370DB;
+            border-color: #9370DB;
+        }
+           /* Background color for the entire page */
+        body {
+            background-color: #FFC0CB; /* Light Pink */
+        }
+    </style>
+
+    <title>Sow Music</title>
 </head>
 <body>
+<!-- Main Body of Page -->
+<div class="container">
+    <div class="row m-4">
+        <div class="col text-center border border-dark">
+            <h1><a href="/" class="text-dark">Sow Music</a></h1>
+        </div>
+    </div>
+    <div class="row m-4 border border-dark">
+        <div class="col text-center m-3">
+            <a href="albums" class="btn btn-outline-primary btn-lg">Album</a>
+        </div>
+        <div class="col text-center m-3">
+            <a href="artists" class="btn btn-outline-primary btn-lg">Artist</a>
+        </div>
+        <div class="col text-center m-3">
+            <a href="genres" class="btn btn-outline-primary btn-lg">Genre</a>
+        </div>
+        <div class="col text-center m-3">
+            <a href="labels" class="btn btn-outline-primary btn-lg">Label</a>
+        </div>
+        <div class="col text-center m-3">
+            <a href="playlists" class="btn btn-outline-primary btn-lg">Playlist</a>
+        </div>
+        <div class="col text-center m-3">
+            <a href="songs" class="btn btn-outline-primary btn-lg">Song</a>
+        </div>
+    </div>
+</div> <!-- Closing div for container -->
 
+
+<div class="row m-4 border border-dark">
+    <div class="col-3 text-center m-3">
+        <span class="h3">Add Label</span>
+    </div>
+    <div class="col-7 text-center m-3">
+        <form action="addLabel" method="POST">
+            <div class="form-group row">
+                <label for="name" class="col-3 col-form-label">
+                    Name</label>
+                <div class="col-9">
+                    <input type="text" name="name"
+                           id="name" class="form-control"/>
+                    <div th:if="${#fields.hasErrors('label.name')}" class="text-danger">
+                        <div th:each="err : ${#fields.errors('label.name')}">
+                            <p th:text="${err}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="description" class="col-3 col-form-label">
+                    Description</label>
+                <div class="col-9">
+                    <input type = "text" id="description" name="description" class ="form-control"/>
+                    <div th:if="${#fields.hasErrors('label.description')}" class="text-danger">
+                        <div th:each="err : ${#fields.errors('label.description')}">
+                            <p th:text="${err}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Label</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='/labels'">Cancel</button>
+        </form>
+    </div>
+</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </body>
-</html>
+</html>;

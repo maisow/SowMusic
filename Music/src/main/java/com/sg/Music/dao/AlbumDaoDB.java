@@ -153,6 +153,16 @@ public class AlbumDaoDB implements AlbumDao {
         return albums;
     }
 
+    @Override
+    public Artist getArtistByName(String artistName) {
+        String sql = "SELECT * FROM Artist WHERE artistName = ?";
+        try {
+            return jdbc.queryForObject(sql, new ArtistMapper(), artistName);
+        } catch (DataAccessException ex) {
+            return null; // Return null if artist not found
+        }
+    }
+
     public static final class AlbumMapper implements RowMapper<Album> {
         @Override
         public Album mapRow(ResultSet rs, int rowNum) throws SQLException {

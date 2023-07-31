@@ -20,4 +20,7 @@ public interface ArtistDao {
 
     List<Artist> getArtistsByAlbum(Album album);
 
+    List<Artist> getArtistsByLabel(Label label);
+
+
 }

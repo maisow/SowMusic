@@ -53,19 +53,18 @@
     </div>
 </div> <!-- Closing div for container -->
 
-
-<div class="row m-4 border border-dark">
+    <div class="row m-4 border border-dark">
         <div class="col-3 text-center m-3">
-            <span class="h3">Add Album</span>
+            <span class="h3">Edit Album</span>
         </div>
         <div class="col-7 text-center m-3">
-            <form action="addAlbum" method="POST">
+
+            <form action="editAlbum" method="POST">
                 <div class="form-group row">
-                    <label for="name" class="col-3 col-form-label">
-                        Name</label>
+                    <label for="name" class="col-3 col-form-label">Name</label>
                     <div class="col-9">
-                        <input type="text" name="name"
-                               id="name" class="form-control"/>
+                        <input type="text" name="name" id="name" class="form-control"
+                               th:value="${album.name}"/>
                         <div th:if="${#fields.hasErrors('album.name')}" class="text-danger">
                             <div th:each="err : ${#fields.errors('album.name')}">
                                 <p th:text="${err}"></p>
@@ -74,19 +73,8 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="description" class="col-3 col-form-label">
-                        Description</label>
-                    <div class="col-9">
-                        <input type = "text" id="description" name="description" class ="form-control"/>
-                        <div th:if="${#fields.hasErrors('album.description')}" class="text-danger">
-                            <div th:each="err : ${#fields.errors('album.description')}">
-                                <p th:text="${err}"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="grammy" class="col-3 col-form-label">Grammy Win?</label>
+                    <label for="grammy" class="col-3 col-form-label">
+                        Grammy Win?</label>
                     <div class="col-9">
                         <select id="grammy" name="grammy">
                             <option value="true">Yes</option>
@@ -94,13 +82,31 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label for="description" class="col-3 col-form-label">
+                        Description</label>
+                    <div class="col-9">
+                        <input type="text" name="description"
+                               id="description" class="form-control"
+                               th:value="${album.description}"/>
+                        <div th:if="${#fields.hasErrors('album.description')}" class="text-danger">
+                            <div th:each="err : ${#fields.errors('album.description')}">
+                                <p th:text="${err}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
                 <div class="form-group row">
                     <label for="artists" class="col-3 col-form-label">
                         Artists</label>
                     <div class="col-9">
-                        <select multiple id="artists" name="artistId" class="form-control">
-                            <option th:each="artist : ${artists}" th:value="${artist.id}" th:text="${artist.name}">
+                        <select multiple id="artists" name="artistId"
+                                class="form-control" >
+                            <option th:each="artist : ${artists}"
+                                    th:value="${artist.id}"
+                                    th:text="${artist.name}">
                                 Artist Name</option>
                         </select>
                         <div th:if="${#fields.hasErrors('album.artists')}" class="text-danger">
@@ -110,12 +116,17 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Add Album</button>
+                <input type="hidden" name="id" th:value="${album.id}"/>
+                <button type="submit" class="btn btn-primary">Edit Album</button>
                 <button type="button" class="btn btn-primary" onclick="window.location.href='/albums'">Cancel</button>
             </form>
         </div>
     </div>
 </div>
+<!-- End main body -->
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
